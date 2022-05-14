@@ -1,0 +1,20 @@
+{
+  "name": "ts-graphdb",
+  "version": "1.0.0",
+  "description": "A Tiny Graph Database built in Typescript.",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "ts-node build",
+    "test": "jest"
+  },
+  "author": "Manash Baul",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "jest": "^28.1.0",
+    "ts-jest": "^28.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
