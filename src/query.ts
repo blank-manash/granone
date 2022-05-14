@@ -1,3 +1,9 @@
+/**
+ * @file  : query.ts
+ * @author: Manash Baul <mximpaid@gmail.com>
+ * Date   : 15.05.2022
+ */
+
 import {Graph} from './graph';
 import {VertexPipeType} from './pipetypes/vertexPipe';
 import {Engine, STATES} from './types';

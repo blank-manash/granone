@@ -32,25 +32,41 @@ export class Graph {
     }
 
     public addEdge(a: number, b: number) {
-       const validate = (num: number) => {
-           if (!this.nodeSet.has(num))
-               throw Error(`${num} is not present in database`);
-       };
-       validate(a);
-       validate(b);
+        const validate = (num: number) => {
+            if (!this.nodeSet.has(num))
+                throw Error(`${num} is not present in database`);
+        };
+        validate(a);
+        validate(b);
 
-       const nodeA = this.nodeSet.get(a);
-       const nodeB = this.nodeSet.get(b);
+        const nodeA = this.nodeSet.get(a);
+        const nodeB = this.nodeSet.get(b);
 
-       nodeA!.children.push(nodeB!);
-       nodeB!.parents.push(nodeA!);
+        nodeA!.children.push(nodeB!);
+        nodeB!.parents.push(nodeA!);
     };
 
     public addNode(a: any): void {
         const id: number = this.getId(a);
         a.id = id;
-        const node: Node = { entity: <Entity> a, parents: [], children: [] };
+        const node: Node = {entity: <Entity>a, parents: [], children: []};
         this.nodeSet.set(id, node);
+    }
+
+    public findVertices(values: Object) {
+        return Array.from(this.nodeSet.values())
+            .map((node: Node): Entity => node.entity)
+            .filter((nodeValue) => {
+                for (const [key, value] of Object.entries(values)) {
+                    if (nodeValue[key] && nodeValue[key] != value)
+                        return false;
+                }
+                return true;
+            });
+    }
+
+    public static create() {
+        return new Graph();
     }
 
     private constructor() {
