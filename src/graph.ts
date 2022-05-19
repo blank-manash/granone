@@ -10,20 +10,11 @@
  * Primary of which are { findParents, findChildren };
  * Support for edges { Adding a edge };
  */
-
-interface Node {
-    entity: Entity;
-    parents: Array<Node>;
-    children: Array<Node>;
-}
-
-interface Entity extends Record<string, any> {
-    id: number
-}
+import {Vertex, Entity} from "./types";
 
 export class Graph {
     private autoId: number;
-    private nodeSet: Map<number, Node>;
+    private nodeSet: Map<number, Vertex>;
 
     private getId(a: any) {
         if (a.hasOwnProperty("id") && this.nodeSet.has(a.id))
@@ -49,14 +40,14 @@ export class Graph {
     public addNode(a: any): void {
         const id: number = this.getId(a);
         a.id = id;
-        const node: Node = {entity: <Entity>a, parents: [], children: []};
+        const node: Vertex = {entity: <Entity>a, parents: [], children: []};
         this.nodeSet.set(id, node);
     }
 
-    public findVertices(values: Object) {
+    public findVertices(values: object): Array<Vertex> {
         return Array.from(this.nodeSet.values())
-            .map((node: Node): Entity => node.entity)
-            .filter((nodeValue) => {
+            .filter((node) => {
+                const nodeValue = node.entity;
                 for (const [key, value] of Object.entries(values)) {
                     if (nodeValue[key] && nodeValue[key] != value)
                         return false;
@@ -70,7 +61,7 @@ export class Graph {
     }
 
     private constructor() {
-        this.nodeSet = new Map<number, Node>();
+        this.nodeSet = new Map<number, Vertex>();
         this.autoId = 0;
     }
 

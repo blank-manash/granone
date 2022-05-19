@@ -1,20 +1,13 @@
-import {PipeType, STATES} from '../types';
+import {PipeType, Vertex, STATES} from '../types';
 
 export class VertexPipeType implements PipeType {
-    vertices: Array<object>;
-
-    private constructor(_vertices: Array<object>) {
-        this.vertices = _vertices;
+    provides(v: Vertex): void {
+        throw new Error('Method not implemented.');
     }
-
-    public consume(entry: object | null): number | object {
-        if (this.vertices.length === 0)
-            return STATES.DONE;
-
-        return <object> this.vertices.pop();
+    get(): Vertex {
+        throw new Error('Method not implemented.');
     }
-    public static create(_vertices: Array<object>) {
-        const vertexPipe: VertexPipeType = new VertexPipeType(_vertices);
-        return vertexPipe;
+    getState(): STATES {
+        throw new Error('Method not implemented.');
     }
 };

@@ -17,7 +17,9 @@ export enum STATES {
  */
 
 export interface PipeType {
-    consume(entry: object | null): number | object;
+    provides(v: Vertex): void;
+    get(): Vertex;
+    getState(): STATES;
 };
 
 export type Engine = {
@@ -26,3 +28,13 @@ export type Engine = {
     next: number;
     state: number;
 };
+
+export interface Vertex {
+    entity: Entity;
+    parents: Array<Vertex>;
+    children: Array<Vertex>;
+}
+
+export interface Entity extends Record<string, any> {
+    id: number
+}

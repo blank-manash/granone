@@ -1,0 +1,18 @@
+  Option: --language-force=typescript
+  Option: --typescript-kinds=catnfvlmie
+Initialize parser: TypeScript
+ctags: Warning: Unsupported kind: 't' for --typescript-kinds option
+enable field "name": yes
+enable field "input": yes
+enable field "pattern": yes
+Reading command line arguments
+OPENING /tmp/vXoscZQ/29.ts as TypeScript language file [new]
+Node	/tmp/vXoscZQ/29.ts	/^interface Node {$/;"	i	line:14
+Entity	/tmp/vXoscZQ/29.ts	/^interface Entity extends Record<string, any> {$/;"	i	line:20
+Graph	/tmp/vXoscZQ/29.ts	/^export class Graph {$/;"	c	line:24
+getId	/tmp/vXoscZQ/29.ts	/^    private getId(a: any) {$/;"	m	line:28	class:Graph	access:private
+addEdge	/tmp/vXoscZQ/29.ts	/^    public addEdge(a: number, b: number) {$/;"	m	line:34	class:Graph	access:public
+validate	/tmp/vXoscZQ/29.ts	/^        validate(a);$/;"	m	line:39	class:Graph	access:public
+findVertices	/tmp/vXoscZQ/29.ts	/^    public findVertices(values: Object) {$/;"	m	line:56	class:Graph	access:public
+create	/tmp/vXoscZQ/29.ts	/^    public static create() {$/;"	m	line:68	class:Graph	access:public
+constructor	/tmp/vXoscZQ/29.ts	/^    private constructor() {$/;"	m	line:72	class:Graph	access:private
