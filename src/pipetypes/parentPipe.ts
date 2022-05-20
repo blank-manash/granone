@@ -1,22 +1,16 @@
-import {PipeType, STATES, Vertex} from "../types";
+import {Vertex} from "../types";
+import {PipeType} from "../PipeType";
 
-export class ParentPipeType implements PipeType {
-    private list: Array<Vertex>;
-    private state: STATES;
-    private constructor() {
-        this.list = [];
-        this.state = STATES.PULL;
-    }
-    provides(v: Vertex): void {
-        v.parents.forEach((ver) => this.list.push(ver));
-    }
-    get(): Vertex {
-        return this.list.pop()!;
-    }
-    getState(): STATES {
-        return this.state;
-    }
-    public static create() {
+export class ParentPipeType extends PipeType {
+    static create(): PipeType {
         return new ParentPipeType();
     }
+    updateState() {
+        this.updateStateNormal();
+    }
+    provides(v: Vertex): void {
+        v.parents.forEach(v => this.list.push(v));
+        this.updateState();
+    }
+    
 }

@@ -4,22 +4,12 @@
  * Date   : 14.05.2022
  */
 
+import {PipeType} from "./PipeType";
+
 export enum STATES {
     PULL,
     RUNNING,
     DONE
-};
-
-/*
- * A PipeType is an object, which takes an object (gremlin) and outputs
- * another, now that may be the same gremlin, or something entirely else
- * It can also output states, like `done` or `pull`.
- */
-
-export interface PipeType {
-    provides(v: Vertex): void;
-    get(): Vertex;
-    getState(): STATES;
 };
 
 export type Engine = {

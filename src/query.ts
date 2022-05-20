@@ -5,7 +5,11 @@
  */
 
 import {Graph} from './graph';
-import {Entity, PipeType, STATES, Vertex} from './types';
+import {PipeType} from "./PipeType";
+import {ChildPipeType} from './pipetypes/childPipe';
+import {ParentPipeType} from './pipetypes/parentPipe';
+import {VertexPipeType} from './pipetypes/vertexPipe';
+import {STATES, Vertex} from './types';
 
 
 export class Query {
@@ -19,12 +23,28 @@ export class Query {
         this.graph = _graph;
     }
 
+    private addPipeType(pipeType: PipeType) {
+        this.prog.push(pipeType);
+    }
+
     public v(predicate: number | string | object): Query {
         if (typeof predicate == "number" || typeof predicate == "string") {
             predicate = {id: predicate};
         }
         const vertices = this.graph.findVertices(predicate);
+        const pipeType: PipeType = VertexPipeType.create(vertices);
+        this.addPipeType(pipeType);
         return this;
+    }
+
+    public parent() {
+        const pipeType: PipeType = ParentPipeType.create();
+        this.addPipeType(pipeType);
+    }
+    
+    public child() {
+        const pipeType: PipeType = ChildPipeType.create();
+        this.addPipeType(pipeType);
     }
 
     public run(): Array<Vertex> {
@@ -68,7 +88,6 @@ export class Query {
 
         return results;
     }
-
 
     public static create(_graph: Graph) {
         const queryEngine: Query = new Query(_graph);
