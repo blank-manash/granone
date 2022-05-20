@@ -13,13 +13,19 @@ export abstract class PipeType {
         this.list = [];
         this.state = STATES.PULL;
     }
-    protected updateStateNormal() {
+    protected updateStateAndMakeUnqiue() {
+        this.makeUnique();
         this.state = this.list.length === 0 ? STATES.PULL : STATES.RUNNING;
+    }
+    protected makeUnique() {
+        this.list = [...new Set(this.list)];
     }
     abstract updateState(): void;
     abstract provides(v: Vertex): void;
     get(): Vertex {
-        return this.list.pop()!;
+        const vertex = this.list.pop()!;
+        this.updateState();
+        return vertex;
     }
     getState(): STATES {
         return this.state;

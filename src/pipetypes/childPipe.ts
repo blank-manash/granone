@@ -6,9 +6,10 @@ export class ChildPipeType extends PipeType {
         return new ChildPipeType();
     }
     updateState(): void {
-        this.updateStateNormal();
+        this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
         v.children.forEach(v => this.list.push(v));
+        this.updateState();
     }
 }

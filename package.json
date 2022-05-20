@@ -16,5 +16,8 @@
     "ts-jest": "^28.0.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "tslog": "^3.3.3"
   }
 }

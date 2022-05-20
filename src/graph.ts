@@ -5,25 +5,37 @@
  */
 
 
+import {Vertex, Entity} from "./types";
+
 /*
  * Supports all the functionality of a graph.
  * Primary of which are { findParents, findChildren };
  * Support for edges { Adding a edge };
  */
-import {Vertex, Entity} from "./types";
-
 export class Graph {
     private autoId: number;
     private nodeSet: Map<number, Vertex>;
-
     private getId(a: any) {
         if (a.hasOwnProperty("id") && this.nodeSet.has(a.id))
             throw Error("ID already Exists");
         return a.id || this.autoId++;
     }
 
-    public getNodeById(id: number) {
+    public findNodeById(id: number) {
         return this.nodeSet.get(id);
+    }
+    public findNodeByIds(...id: number[]) {
+        const result: Array<Vertex> = [];
+        id.forEach(x => result.push(this.findNodeById(x)!));
+        return result;
+    }
+
+    public findEntityById(id: number) {
+        return this.findNodeById(id)?.entity;
+    }
+
+    public findEntitiesByIds(...id: number[]) {
+        return this.findNodeByIds(...id).map(x => x.entity);
     }
 
     public addEdge(a: number, b: number) {

@@ -25,8 +25,8 @@ describe('1. Graph Functionality', () => {
         const idB = graph.addNode(nodeB);
         graph.addEdge(idA, idB);
 
-        const vertexFirst = graph.getNodeById(idA);
-        const vertexSecond = graph.getNodeById(idB);
+        const vertexFirst = graph.findNodeById(idA);
+        const vertexSecond = graph.findNodeById(idB);
 
         expect(vertexFirst?.children).toContain(vertexSecond);
         expect(vertexSecond?.parents).toContain(vertexFirst);
@@ -34,7 +34,7 @@ describe('1. Graph Functionality', () => {
 
     it("c. Should Not Have False Positives", () => {
         const id = graph.addNode({ excuse: "me" });
-        const unexpectedVertex = graph.getNodeById(id);
+        const unexpectedVertex = graph.findNodeById(id);
 
         expect(graph.findVertices({excuse: "Me" })).not.toContain(unexpectedVertex);
     })

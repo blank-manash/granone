@@ -3,7 +3,8 @@ import {PipeType} from "../PipeType";
 
 export class VertexPipeType extends PipeType {
     updateState(): void {
-        this.state = this.list.length === 0 ? STATES.RUNNING : STATES.DONE;
+        this.makeUnique();
+        this.state = this.list.length === 0 ? STATES.DONE : STATES.RUNNING;
     }
     provides(_v: Vertex): void {
         this.updateState();
@@ -11,6 +12,7 @@ export class VertexPipeType extends PipeType {
     private constructor(vertices: Array<Vertex>) {
         super();
         this.list = vertices;
+        this.updateState();
     }
     static create(vertices: Array<Vertex>) {
         return new VertexPipeType(vertices);

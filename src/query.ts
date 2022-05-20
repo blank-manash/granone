@@ -9,8 +9,7 @@ import {PipeType} from "./PipeType";
 import {ChildPipeType} from './pipetypes/childPipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
 import {VertexPipeType} from './pipetypes/vertexPipe';
-import {STATES, Vertex} from './types';
-
+import {Entity, STATES, Vertex} from './types';
 
 export class Query {
     prog: Array<PipeType>;
@@ -26,7 +25,7 @@ export class Query {
     private addPipeType(pipeType: PipeType) {
         const i = this.prog.length;
         this.prog.push(pipeType);
-        this.prev[i] = this.prev[i - 1];
+        this.prev.push(this.prev[i - 1]);
     }
 
     public v(predicate: number | string | object): Query {
@@ -35,25 +34,27 @@ export class Query {
         }
         const vertices = this.graph.findVertices(predicate);
         const pipeType: PipeType = VertexPipeType.create(vertices);
-        this.addPipeType(pipeType);
         const i = this.prog.length;
-        this.prev[i] = i;
+        this.prog.push(pipeType);
+        this.prev.push(i);
         return this;
     }
 
     public parent() {
         const pipeType: PipeType = ParentPipeType.create();
         this.addPipeType(pipeType);
+        return this;
     }
     
     public child() {
         const pipeType: PipeType = ChildPipeType.create();
         this.addPipeType(pipeType);
+        return this;
     }
 
-    public run(): Array<Vertex> {
+    public run(): Array<Entity> {
 
-        const results: Array<Vertex> = [];
+        const results: Array<Entity> = [];
         if (this.prog.length === 0) return results;
 
         let index = 0;
@@ -62,17 +63,19 @@ export class Query {
         while (true) {
             const pipeType: PipeType = this.prog.at(index)!;
             const currentIndex = index;
+            const isEnd: boolean = index === this.prog.length - 1;
             if (vertex) {
                 pipeType.provides(vertex);
                 vertex = null;
             }
 
             // Update Index
-            const state = pipeType.getState();
+            let state = pipeType.getState();
             if (state === STATES.RUNNING) {
                 vertex = pipeType.get();
-                if (index === this.prog.length - 1) {
-                    results.push(vertex);
+                if (isEnd) {
+                    results.push(vertex.entity);
+                    vertex = null;
                 } else {
                     index = index + 1;
                 }
@@ -81,7 +84,7 @@ export class Query {
             } else {
                 break;
             }
-
+            state = pipeType.getState();
             // Update Prev
             if (state === STATES.RUNNING) {
                 this.prev[currentIndex] = currentIndex;
@@ -90,7 +93,7 @@ export class Query {
             }
         }
 
-        return results;
+        return [...new Set(results)];
     }
 
     public static create(_graph: Graph) {

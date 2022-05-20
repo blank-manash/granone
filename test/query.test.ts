@@ -1,5 +1,6 @@
 import {Graph} from "../src/graph";
 import {Query} from "../src/query";
+import {Entity} from "../src/types";
 
 
 describe('Query Should Work', () => {
@@ -17,7 +18,9 @@ describe('Query Should Work', () => {
             {name: "c3"},
         );
         for(let i = 0; i < 3; ++i) {
-            graph.addEdge(ids.at(i)!, ids.at(i + 3)!);
+            for(let j = 3; j < 6; ++j) {
+                graph.addEdge(i, j);
+            }
         }
     });
 
@@ -29,7 +32,20 @@ describe('Query Should Work', () => {
         it("a. Should Find the correct vertices", () => {
             const vertices = query.v({ name: "p1" }).run();
             expect(vertices).toHaveLength(1);
-            expect(vertices.at(0)).toStrictEqual(graph.getNodeById(0));
+            expect(vertices.at(0)).toStrictEqual(graph.findEntityById(0));
         });
+
+        it("b. Should Find all siblings", () => {
+            const expected = graph.findEntitiesByIds(3, 4, 5);
+            const actual = query.v({name: "c1"}).parent().child().run();
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
+        })
+
+        it("c. Should Find all parents", () => {
+            const expected = graph.findEntitiesByIds(0, 1, 2);
+            const actual = query.v(3).parent().child().parent().run();
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
+            
+        })
     });
 });

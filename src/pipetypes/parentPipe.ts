@@ -6,7 +6,7 @@ export class ParentPipeType extends PipeType {
         return new ParentPipeType();
     }
     updateState() {
-        this.updateStateNormal();
+        this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
         v.parents.forEach(v => this.list.push(v));
