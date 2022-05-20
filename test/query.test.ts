@@ -1,37 +1,35 @@
-import {Query} from '../query'
-import {Graph, GraphImpl} from '../graph'
+import {Graph} from "../src/graph";
+import {Query} from "../src/query";
 
 
 describe('Query Should Work', () => {
-
-    function getGraph(): Graph {
-        const graph = new GraphImpl();
-        jest.spyOn(graph, 'findVertices').
-            mockImplementation((pred: object) => [ {id: 1}, {id: 2}, {id: 3} ]);
-        return graph;
-        
-    }
-
-    function getQuery(): Query {
-        const graph = getGraph();
-        const query = Query.create(graph);
-        return query;
-    }
-    test('Graph is mocked', () => {
-        const graph = getGraph();
-        expect(graph.findVertices({t : 1}).length).toBeGreaterThan(0);
+    let graph: Graph;
+    let ids: Array<number>;
+    let query: Query;
+    beforeAll(() => {
+        graph = Graph.create();
+        ids = graph.addNodeMany(
+            {name: "p1"},
+            {name: "p2"},
+            {name: "p3"},
+            {name: "c1"},
+            {name: "c2"},
+            {name: "c3"},
+        );
+        for(let i = 0; i < 3; ++i) {
+            graph.addEdge(ids.at(i)!, ids.at(i + 3)!);
+        }
     });
 
-    test('v() with a number', () => {
-        const q = getQuery();
-        q.v(1);
-        expect(q.prog.length).toBeGreaterThan(0);
-    });
-        
-    test('v() with a object', () => {
-        const q = getQuery();
-        q.v({ id: 31 });
-        expect(q.prog.length).toBeGreaterThan(0);
+    beforeEach(() => {
+        query = Query.create(graph);
     });
 
+    describe("1. Simple Traversal Queries", () => {
+        it("a. Should Find the correct vertices", () => {
+            const vertices = query.v({ name: "p1" }).run();
+            expect(vertices).toHaveLength(1);
+            expect(vertices.at(0)).toStrictEqual(graph.getNodeById(0));
+        });
+    });
 });

@@ -22,6 +22,10 @@ export class Graph {
         return a.id || this.autoId++;
     }
 
+    public getNodeById(id: number) {
+        return this.nodeSet.get(id);
+    }
+
     public addEdge(a: number, b: number) {
         const validate = (num: number) => {
             if (!this.nodeSet.has(num))
@@ -37,11 +41,18 @@ export class Graph {
         nodeB!.parents.push(nodeA!);
     };
 
-    public addNode(a: any): void {
+    public addNode(a: any): number {
         const id: number = this.getId(a);
         a.id = id;
         const node: Vertex = {entity: <Entity>a, parents: [], children: []};
         this.nodeSet.set(id, node);
+        return a.id;
+    }
+
+    public addNodeMany(...a: any[]): Array<number> {
+        const ids: Array<number> = [];
+        a.forEach(x => ids.push(this.addNode(x)));
+        return ids;
     }
 
     public findVertices(values: object): Array<Vertex> {

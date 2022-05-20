@@ -24,7 +24,9 @@ export class Query {
     }
 
     private addPipeType(pipeType: PipeType) {
+        const i = this.prog.length;
         this.prog.push(pipeType);
+        this.prev[i] = this.prev[i - 1];
     }
 
     public v(predicate: number | string | object): Query {
@@ -34,6 +36,8 @@ export class Query {
         const vertices = this.graph.findVertices(predicate);
         const pipeType: PipeType = VertexPipeType.create(vertices);
         this.addPipeType(pipeType);
+        const i = this.prog.length;
+        this.prev[i] = i;
         return this;
     }
 
