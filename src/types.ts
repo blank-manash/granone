@@ -6,10 +6,12 @@
 
 import {PipeType} from "./PipeType";
 
+
 export enum STATES {
     PULL,
     RUNNING,
-    DONE
+    DONE,
+    AS
 };
 
 export type Engine = {
