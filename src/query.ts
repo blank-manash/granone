@@ -9,6 +9,7 @@ import {PipeType} from "./PipeType";
 import {ChildPipeType} from './pipetypes/childPipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
 import {VertexPipeType} from './pipetypes/vertexPipe';
+import {QueryRunner} from './QueryRunner';
 import {Entity, STATES, Vertex} from './types';
 
 export class Query {
@@ -52,48 +53,8 @@ export class Query {
         return this;
     }
 
-    public run(): Array<Entity> {
-
-        const results: Array<Entity> = [];
-        if (this.prog.length === 0) return results;
-
-        let index = 0;
-        let vertex: Vertex | null = null;
-
-        while (true) {
-            const pipeType: PipeType = this.prog.at(index)!;
-            const currentIndex = index;
-            const isEnd: boolean = index === this.prog.length - 1;
-            if (vertex) {
-                pipeType.provides(vertex);
-                vertex = null;
-            }
-
-            // Update Index
-            let state = pipeType.getState();
-            if (state === STATES.RUNNING) {
-                vertex = pipeType.get();
-                if (isEnd) {
-                    results.push(vertex.entity);
-                    vertex = null;
-                } else {
-                    index = index + 1;
-                }
-            } else if (state === STATES.PULL) {
-                index = this.prev[index];
-            } else {
-                break;
-            }
-            state = pipeType.getState();
-            // Update Prev
-            if (state === STATES.RUNNING) {
-                this.prev[currentIndex] = currentIndex;
-            } else if (state === STATES.PULL) {
-                this.prev[currentIndex] = this.prev[currentIndex - 1];
-            }
-        }
-
-        return [...new Set(results)];
+    run(): Array<Entity> {
+        return QueryRunner.create(this.prog, this.prev).run();
     }
 
     public static create(_graph: Graph) {
