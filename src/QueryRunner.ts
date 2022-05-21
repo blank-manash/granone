@@ -1,4 +1,5 @@
 import {PipeType} from "./PipeType";
+import {AsPipeType} from "./pipetypes/asPipe";
 import {Entity, STATES, Vertex} from "./types";
 
 export class QueryRunner {
@@ -8,7 +9,7 @@ export class QueryRunner {
     private vertex: Vertex | null;
     private results: Entity[];
     private currentPipe: PipeType;
-    private state: STATES;
+    private labels: Map<string, Array<Vertex>>;
 
     constructor(_prog: Array<PipeType>, _prev: Array<number>) {
         this.prog = _prog;
@@ -17,7 +18,7 @@ export class QueryRunner {
         this.index = 0;
         this.vertex = null;
         this.currentPipe = _prog.at(0)!;
-        this.state = STATES.PULL;
+        this.labels = new Map<string, Array<Vertex>>();
     }
 
     static create(_prog: Array<PipeType>, _prev: Array<number>) {
@@ -60,6 +61,20 @@ export class QueryRunner {
         this.index = this.prev[this.index];
     }
 
+    private processAsState() {
+        const label = (<AsPipeType>this.currentPipe).getLabel();
+        if (!this.labels.has(label)) {
+            const array = new Array<Vertex>();
+            this.labels.set(label, array);
+        }
+        this.labels.get(label)!.push(this.vertex!);
+
+    }
+
+    private processMergeState() {
+        throw new Error("Method not implemented.");
+    }
+
     private process() {
         const state = this.currentPipe.getState();
         switch (state) {
@@ -76,6 +91,12 @@ export class QueryRunner {
                 return true;
 
             case STATES.AS:
+                this.processAsState();
+                break;
+
+            case STATES.MERGE:
+                this.processMergeState();
+                break;
 
             default:
                 throw Error("Undefined STATE");
@@ -83,6 +104,7 @@ export class QueryRunner {
 
         return false;
     }
+
 
     public run(): Array<Entity> {
         if (this.prog.length === 0) return this.results;

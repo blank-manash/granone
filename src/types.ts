@@ -7,11 +7,14 @@
 import {PipeType} from "./PipeType";
 
 
+
+
 export enum STATES {
     PULL,
     RUNNING,
     DONE,
-    AS
+    AS,
+    MERGE
 };
 
 export type Engine = {
