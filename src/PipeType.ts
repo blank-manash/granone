@@ -20,6 +20,15 @@ export abstract class PipeType {
     protected makeUnique() {
         this.list = [...new Set(this.list)];
     }
+    protected addToListWithLabel(array: Vertex[], labelSet: Map<string, Vertex>) {
+        array.map(x => {
+            x.label = labelSet;
+            return x;
+        }).forEach(x => this.list.push(x));
+    }
+    protected addToList(array: Vertex[]) {
+        array.forEach(x => this.list.push(x));
+    }
     abstract updateState(): void;
     abstract provides(v: Vertex): void;
     get(): Vertex {

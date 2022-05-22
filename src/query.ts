@@ -6,7 +6,9 @@
 
 import {Graph} from './graph';
 import {PipeType} from "./PipeType";
+import {AsPipeType} from './pipetypes/asPipe';
 import {ChildPipeType} from './pipetypes/childPipe';
+import {MergePipeType} from './pipetypes/mergePipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
 import {VertexPipeType} from './pipetypes/vertexPipe';
 import {QueryRunner} from './QueryRunner';
@@ -29,7 +31,7 @@ export class Query {
         this.prev.push(this.prev[i - 1]);
     }
 
-    public v(predicate: number | string | object): Query {
+    v(predicate: number | string | object): Query {
         if (typeof predicate == "number" || typeof predicate == "string") {
             predicate = {id: predicate};
         }
@@ -41,14 +43,26 @@ export class Query {
         return this;
     }
 
-    public parent() {
+    parent() {
         const pipeType: PipeType = ParentPipeType.create();
         this.addPipeType(pipeType);
         return this;
     }
-    
-    public child() {
+
+    child() {
         const pipeType: PipeType = ChildPipeType.create();
+        this.addPipeType(pipeType);
+        return this;
+    }
+
+    as(name: string) {
+        const pipeType: PipeType = AsPipeType.create(name);
+        this.addPipeType(pipeType);
+        return this;
+    }
+
+    merge(...args: string[]) {
+        const pipeType: PipeType = MergePipeType.create(...args);
         this.addPipeType(pipeType);
         return this;
     }
@@ -57,7 +71,7 @@ export class Query {
         return QueryRunner.create(this.prog, this.prev).run();
     }
 
-    public static create(_graph: Graph) {
+    static create(_graph: Graph) {
         const queryEngine: Query = new Query(_graph);
         return queryEngine;
     }

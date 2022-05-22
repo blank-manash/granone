@@ -5,16 +5,28 @@
  */
 
 import {PipeType} from '../PipeType'
-import {Vertex} from '../types';
+import {STATES, Vertex} from '../types';
 
 export class MergePipeType extends PipeType {
-    private labels: Set<string>;
-    constructor() {
-        super();
-        this.labels = new Set<string>();
-    }
+    private labelSet: Set<string>;
     updateState(): void {
+        this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
+        if (v.label == undefined) return;
+        v.label.forEach((value, key) => {
+            if (!this.labelSet.has(key)) return;
+            value.label = v.label;
+            this.list.push(value);
+        });
+        this.updateState();
+    }
+    private constructor(...args: string[]) {
+        super();
+        this.labelSet = new Set<string>();
+        args.forEach(x => this.labelSet.add(x));
+    }
+    static create(...args: string[]) {
+        return new MergePipeType(...args);
     }
 }

@@ -52,6 +52,7 @@ export class QueryRunner {
         this.vertex = this.currentPipe.get();
         if (this.isEnd()) {
             this.results.push(this.vertex.entity);
+            this.vertex = null;
             return;
         }
         this.index = this.index + 1;
@@ -62,13 +63,7 @@ export class QueryRunner {
     }
 
     private processAsState() {
-        const label = (<AsPipeType>this.currentPipe).getLabel();
-        if (!this.labels.has(label)) {
-            const array = new Array<Vertex>();
-            this.labels.set(label, array);
-        }
-        this.labels.get(label)!.push(this.vertex!);
-
+        
     }
 
     private processMergeState() {
@@ -89,14 +84,6 @@ export class QueryRunner {
 
             case STATES.DONE:
                 return true;
-
-            case STATES.AS:
-                this.processAsState();
-                break;
-
-            case STATES.MERGE:
-                this.processMergeState();
-                break;
 
             default:
                 throw Error("Undefined STATE");

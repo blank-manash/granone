@@ -17,8 +17,8 @@ describe('Query Should Work', () => {
             {name: "c2"},
             {name: "c3"},
         );
-        for(let i = 0; i < 3; ++i) {
-            for(let j = 3; j < 6; ++j) {
+        for (let i = 0; i < 3; ++i) {
+            for (let j = 3; j < 6; ++j) {
                 graph.addEdge(i, j);
             }
         }
@@ -30,7 +30,7 @@ describe('Query Should Work', () => {
 
     describe("1. Simple Traversal Queries", () => {
         it("a. Should Find the correct vertices", () => {
-            const vertices = query.v({ name: "p1" }).run();
+            const vertices = query.v({name: "p1"}).run();
             expect(vertices).toHaveLength(1);
             expect(vertices.at(0)).toStrictEqual(graph.findEntityById(0));
         });
@@ -45,7 +45,23 @@ describe('Query Should Work', () => {
             const expected = graph.findEntitiesByIds(0, 1, 2);
             const actual = query.v(3).parent().child().parent().run();
             expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
-            
+
         })
     });
+
+    describe("2. Merge and As Queries", () => {
+        it("a. Should Merge the correct vertices", () => {
+
+            const actual = query.
+                v({name: "p1"}).
+                as('parent').
+                child().
+                as('children').
+                merge('parent', 'children').
+                run();
+
+            const expected = graph.findEntitiesByIds(0, 3, 4, 5);
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
+        })
+    })
 });

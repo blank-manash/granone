@@ -9,7 +9,11 @@ export class ChildPipeType extends PipeType {
         this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
-        v.children.forEach(v => this.list.push(v));
+        const children = v.children;
+        if (v.label == undefined)
+            this.addToList(children);
+        else
+            this.addToListWithLabel(children, v.label);
         this.updateState();
     }
 }
