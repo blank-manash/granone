@@ -1,5 +1,4 @@
 import {PipeType} from "./PipeType";
-import {AsPipeType} from "./pipetypes/asPipe";
 import {Entity, STATES, Vertex} from "./types";
 
 export class QueryRunner {
@@ -9,7 +8,6 @@ export class QueryRunner {
     private vertex: Vertex | null;
     private results: Entity[];
     private currentPipe: PipeType;
-    private labels: Map<string, Array<Vertex>>;
 
     constructor(_prog: Array<PipeType>, _prev: Array<number>) {
         this.prog = _prog;
@@ -18,7 +16,6 @@ export class QueryRunner {
         this.index = 0;
         this.vertex = null;
         this.currentPipe = _prog.at(0)!;
-        this.labels = new Map<string, Array<Vertex>>();
     }
 
     static create(_prog: Array<PipeType>, _prev: Array<number>) {
@@ -60,14 +57,6 @@ export class QueryRunner {
 
     private processPullState() {
         this.index = this.prev[this.index];
-    }
-
-    private processAsState() {
-        
-    }
-
-    private processMergeState() {
-        throw new Error("Method not implemented.");
     }
 
     private process() {

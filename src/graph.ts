@@ -72,7 +72,8 @@ export class Graph {
             .filter((node) => {
                 const nodeValue = node.entity;
                 for (const [key, value] of Object.entries(values)) {
-                    if (nodeValue[key] && nodeValue[key] != value)
+                    const item = nodeValue[key];
+                    if ((!item && item !== 0) || (item != value))
                         return false;
                 }
                 return true;
