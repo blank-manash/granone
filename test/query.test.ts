@@ -85,10 +85,9 @@ describe('Query Should Work', () => {
 
     describe("2. Merge and As Queries", () => {
         it("a. Should Merge the correct vertices", () => {
-
+            const actual = query.v(2).as('me').parent().as('parent').parent().as('grand-parent').merge('parent', 'grand-parent').run();
+            const expected = graph.findEntitiesByIds(8, 9, 10, 14);
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
         });
-
-        it("b. Should Merge Everything", () => {
-        })
     })
 });

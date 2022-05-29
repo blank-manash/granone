@@ -1,4 +1,4 @@
-import {Vertex} from "../types";
+import {PIPETYPES, Vertex} from "../types";
 import {PipeType} from "../PipeType";
 
 export class ParentPipeType extends PipeType {
@@ -10,11 +10,11 @@ export class ParentPipeType extends PipeType {
     }
     provides(v: Vertex): void {
         const parents = v.parents;
-        if (v.label == undefined)
-            this.addToList(parents);
-        else
-            this.addToListWithLabel(parents, v.label);
+        this.addToList(parents);
         this.updateState();
     }
     
+    getPipeType(): PIPETYPES {
+        return PIPETYPES.PARENT;
+    }
 }

@@ -27,8 +27,11 @@ export class Query {
 
     private addPipeType(pipeType: PipeType) {
         const i = this.prog.length;
-        this.prog.push(pipeType);
-        this.prev.push(this.prev[i - 1]);
+        pipeType.addToPullIndex(i - 1);
+        this.prev[i] = this.prev[i - 1];
+    }
+    
+    private addMergePipeType(pipeType: MergePipeType) {
     }
 
     v(predicate: number | string | object): Query {

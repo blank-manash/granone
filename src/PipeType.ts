@@ -1,4 +1,4 @@
-import {STATES, Vertex} from "./types";
+import {PIPETYPES, STATES, Vertex} from "./types";
 
 /*
  * A PipeType is an object, which takes an object (gremlin) and outputs
@@ -9,8 +9,10 @@ import {STATES, Vertex} from "./types";
 export abstract class PipeType {
     protected state: STATES;
     protected list: Array<Vertex>;
+    protected pullIndices: Array<number>;
     protected constructor() {
         this.list = [];
+        this.pullIndices = [];
         this.state = STATES.PULL;
     }
     protected updateStateAndMakeUnqiue() {
@@ -20,15 +22,20 @@ export abstract class PipeType {
     protected makeUnique() {
         this.list = [...new Set(this.list)];
     }
-    protected addToListWithLabel(array: Vertex[], labelSet: Map<string, Vertex>) {
-        array.map(x => {
-            x.label = labelSet;
-            return x;
-        }).forEach(x => this.list.push(x));
-    }
+    
     protected addToList(array: Vertex[]) {
         array.forEach(x => this.list.push(x));
     }
+    
+    addToPullIndex(i: number) {
+        this.pullIndices.push(i);
+    }
+
+    getPullIndices(): Array<number> {
+        return this.pullIndices;
+    }
+
+    abstract getPipeType(): PIPETYPES;
     abstract updateState(): void;
     abstract provides(v: Vertex): void;
     get(): Vertex {

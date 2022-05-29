@@ -13,12 +13,9 @@ export class MergePipeType extends PipeType {
         this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
-        if (v.label == undefined) return;
-        v.label.forEach((value, key) => {
-            if (!this.labelSet.has(key)) return;
-            value.label = v.label;
-            this.list.push(value);
-        });
+        const label = v.label;
+        if (label == undefined || !this.labelSet.has(label)) return;
+        this.list.push(v);
         this.updateState();
     }
     private constructor(...args: string[]) {
@@ -28,5 +25,9 @@ export class MergePipeType extends PipeType {
     }
     static create(...args: string[]) {
         return new MergePipeType(...args);
+    }
+
+    getPipeType(): PIPETYPES {
+        return PIPETYPES.MERGE;
     }
 }

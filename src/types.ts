@@ -15,6 +15,15 @@ export enum STATES {
     DONE
 };
 
+export enum PIPETYPES {
+    VERTEX,
+    PARENT,
+    CHILD,
+    MERGE,
+    AS,
+    BACK
+};
+
 export type Engine = {
     func: PipeType;
     name: string;
@@ -30,8 +39,10 @@ export interface Vertex {
     entity: Entity;
     parents: Array<Vertex>;
     children: Array<Vertex>;
-    label?: Map<string, Vertex>;
+    label?: string;
 }
+
+
 
 export interface Entity extends Record<string, any> {
     id: number

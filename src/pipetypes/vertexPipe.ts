@@ -17,4 +17,8 @@ export class VertexPipeType extends PipeType {
     static create(vertices: Array<Vertex>) {
         return new VertexPipeType(vertices);
     }
+    
+    getPipeType(): PIPETYPES {
+        return PIPETYPES.VERTEX;
+    }
 };
