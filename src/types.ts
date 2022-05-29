@@ -15,13 +15,18 @@ export enum STATES {
     DONE
 };
 
+
+
+
 export enum PIPETYPES {
     VERTEX,
     PARENT,
     CHILD,
     MERGE,
     AS,
-    BACK
+    BACK,
+    EXCEPT,
+    TAKE
 };
 
 export type Engine = {

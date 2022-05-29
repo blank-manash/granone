@@ -1,5 +1,6 @@
 import {PipeType} from "./PipeType";
-import {Entity, STATES, Vertex} from "./types";
+import {TakePipeType} from "./pipetypes/takePipeType";
+import {Entity, PIPETYPES, STATES, Vertex} from "./types";
 
 export class QueryRunner {
     private prog: Array<PipeType>;
@@ -79,10 +80,29 @@ export class QueryRunner {
 
     }
 
-    public run(): Array<Entity> {
-        this.dfs(0, null);
-        const entities =  [...new Set(this.results)];
+    private start() {
+        for(let i = 0; i < this.prog.length; ++i) {
+            const pipe = this.prog.at(i)!;
+            if (pipe.getState() !== STATES.RUNNING) continue;
+            this.dfs(i, null);
+            return;
+        }
+    }
+
+    private clean() {
         this.results = [];
+        this.done = false;
+        for(let i = 0; i < this.prog.length; ++i) {
+            const pipe = this.prog.at(i)!;
+            if (pipe.getPipeType() !== PIPETYPES.TAKE) continue;
+            (<TakePipeType> this.prog.at(i)!).resetState();
+        }
+    }
+
+    public run(): Array<Entity> {
+        this.start();
+        const entities =  [...new Set(this.results)];
+        this.clean();
         return entities;
     }
 }

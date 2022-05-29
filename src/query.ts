@@ -9,8 +9,10 @@ import {PipeType} from "./PipeType";
 import {AsPipeType} from './pipetypes/asPipe';
 import {BackPipeType} from './pipetypes/backPipe';
 import {ChildPipeType} from './pipetypes/childPipe';
+import {ExceptPipeType} from './pipetypes/exceptPipe';
 import {MergePipeType} from './pipetypes/mergePipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
+import {TakePipeType} from './pipetypes/takePipeType';
 import {VertexPipeType} from './pipetypes/vertexPipe';
 import {QueryRunner} from './QueryRunner';
 import {Entity, PIPETYPES} from './types';
@@ -98,6 +100,18 @@ export class Query {
         const pipeType: PipeType = VertexPipeType.create(vertices);
         this.prog.push(pipeType);
         this.adj.push([]);
+        return this;
+    }
+
+    except(name: string) {
+        const pipeType: PipeType = ExceptPipeType.create(name);
+        this.addPipeType(pipeType);
+        return this;
+    }
+
+    take(limit: number) {
+        const pipeType: PipeType = TakePipeType.create(limit);
+        this.addPipeType(pipeType);
         return this;
     }
 
