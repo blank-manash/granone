@@ -1,6 +1,6 @@
-# Gracula
+# Granone
 
-Gracula is a in-memory graph database that emphasizes lazy-evaluation and supports complex queries written with the pleasure of TypeScript.
+Granone is a in-memory graph database that emphasizes lazy-evaluation and supports complex queries written with the pleasure of TypeScript.
 
 ## Installation
 ```
