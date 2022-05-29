@@ -33,7 +33,7 @@ console.log(vertices); // { name: "Hello", id: 1 };
 ### Complex Queries
 
 But that is probably, not what you expect to be all. So let's start with some cool stuff.
-[Graph](./docs/graph.png)
+![Graph](./docs/graph.png?raw=true)
 
 Let's build this graph first
 ```typescript
@@ -64,6 +64,25 @@ console.log(vertices)
 ```
 
 Ran a very complex query, but got lost? Get yourself `back`.
+
+```typescript
+const vertices = q.v({name: "Bubble"}).  child().as("first").  parent().as("second").  child().as("Where am I").  back("first").  run();
+console.log(vertices); // [ { name: 'Furious', id: 5 }, {name: 'Eagle', id: 4} ]
+``` 
+What good is a database without pagination?
+
+```typescript
+let q = db.query();
+
+q = q.v(4).parent().take(1);
+
+q.run(); // [ { name: 'Caddle', id: 2 } ]
+q.run(); // [ { name: 'Bubble', id: 1 } ]
+q.run(); // [ { name: 'Aria', id: 0 } ]
+q.run(); // []
+```
+
+You can find more complex usage in the testcases, if you find any bugs or want more features, please create a issue.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
