@@ -1,3 +1,4 @@
+import Granone from "../src/index"
 import {Graph} from "../src/graph";
 import {Query} from "../src/query";
 import {Entity} from "../src/types";
@@ -19,6 +20,10 @@ import {Entity} from "../src/types";
 10 2
  */
 
+function makeUnique(array: Entity[]) {
+    return array.map(x => x.id).sort();
+}
+
 describe('Query Should Work', () => {
     let graph: Graph;
     let query: Query;
@@ -26,10 +31,7 @@ describe('Query Should Work', () => {
     function findEntitiesIdSorted(...args: number[]) {
         return graph.findEntitiesByIds(...args).map(e => e.id).sort();
     }
-    
-    function makeUnique(array: Entity[]) {
-        return array.map(x => x.id).sort();
-    }
+
 
     beforeAll(() => {
         graph = Graph.create();
@@ -126,7 +128,7 @@ describe('Query Should Work', () => {
             let expected = findEntitiesIdSorted(9, 11, 12, 13);
             const actual = [];
 
-            for(let i = 0; i < 4; ++i) {
+            for (let i = 0; i < 4; ++i) {
                 const data = q.run();
                 const id = makeUnique(data).at(0)!;
                 actual.push(id);
@@ -137,3 +139,23 @@ describe('Query Should Work', () => {
     })
 
 });
+
+describe("Another Graph", () => {
+    const db = Granone.create();
+    beforeAll(() => {
+        db.addVertices({name: "Aria"}, {name: "Bubble"}, {name: "Caddle"}, {name: "Dutch"}, {name: "Eagle"}, {name: "Furious"});
+        const edges = [0, 2, 0, 4, 0, 5, 1, 4, 1, 5, 2, 3, 2, 4, 4, 5];
+        for (let i = 0; i + 1 < edges.length; ++i) {
+            db.addEdge(edges[i], edges[i + 1]);
+        }
+    })
+
+    it("1. Back Queries", () => {
+        const q = db.query();
+        const vertices = q.v({name: "Bubble"}).child().as("first").parent().as("second").child().as("Where am I").back("first").run();
+        const actual = makeUnique(vertices);
+        const expected = [4, 5];
+        expect(actual).toStrictEqual(expected);
+    })
+
+})

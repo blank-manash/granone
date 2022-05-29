@@ -48,8 +48,9 @@ export class Query {
         for (let i = this.prog.length - 1; i > 0; i--) {
 
             const pipe = this.prog.at(i)!;
-            if (pipe.getPipeType() === PIPETYPES.MERGE) break;
-            if (pipe.getPipeType() !== PIPETYPES.AS) continue;
+            const pipeName = pipe.getPipeType();
+            if (pipeName === PIPETYPES.MERGE || pipeName === PIPETYPES.BACK) break;
+            if (pipeName !== PIPETYPES.AS) continue;
 
             const label = (<AsPipeType>pipe).getLabel();
 

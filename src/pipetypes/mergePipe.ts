@@ -15,8 +15,6 @@ export class MergePipeType extends PipeType {
     }
 
     provides(v: Vertex): void {
-        const label = v.label;
-        if (label == undefined || !this.satisfies(label)) return;
         this.list.push(v);
         this.updateState();
     }

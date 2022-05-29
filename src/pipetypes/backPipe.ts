@@ -13,9 +13,7 @@ export class BackPipeType extends PipeType {
         this.updateStateAndMakeUnqiue();
     }
     provides(v: Vertex): void {
-        if (v.label && v.label === this.label) {
-            this.list.push(v);
-        }
+        this.list.push(v);
         this.updateState();
     }
 
