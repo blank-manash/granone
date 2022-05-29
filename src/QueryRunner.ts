@@ -81,6 +81,8 @@ export class QueryRunner {
 
     public run(): Array<Entity> {
         this.dfs(0, null);
-        return [...new Set(this.results)];
+        const entities =  [...new Set(this.results)];
+        this.results = [];
+        return entities;
     }
 }

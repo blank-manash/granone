@@ -7,22 +7,25 @@
 import {Graph} from './graph';
 import {PipeType} from "./PipeType";
 import {AsPipeType} from './pipetypes/asPipe';
+import {BackPipeType} from './pipetypes/backPipe';
 import {ChildPipeType} from './pipetypes/childPipe';
 import {MergePipeType} from './pipetypes/mergePipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
 import {VertexPipeType} from './pipetypes/vertexPipe';
 import {QueryRunner} from './QueryRunner';
-import {Entity, PIPETYPES, Vertex} from './types';
+import {Entity, PIPETYPES} from './types';
 
 export class Query {
     prog: Array<PipeType>;
     graph: Graph;
     adj: Array<Array<number>>;
+    runner: QueryRunner | undefined;
 
     private constructor(_graph: Graph) {
         this.prog = [];
         this.adj = new Array<Array<number>>();
         this.graph = _graph;
+        this.runner = undefined;
     }
 
     private addEdge(i: number, j: number) {
@@ -35,9 +38,10 @@ export class Query {
         this.adj.push([]);
         this.addEdge(i - 1, i);
     }
-    
+
     private addMergePipeType(pipeType: MergePipeType) {
         const ci = this.prog.length;
+        const addedLabels = new Set<string>();
         this.adj.push([]);
         for (let i = this.prog.length - 1; i > 0; i--) {
 
@@ -47,12 +51,43 @@ export class Query {
 
             const label = (<AsPipeType>pipe).getLabel();
 
-            if (!pipeType.satisfies(label)) continue;
-
+            if (!pipeType.satisfies(label) || addedLabels.has(label)) continue;
+            addedLabels.add(label);
             this.addEdge(i, ci);
         }
-        this.prog.push(pipeType);
 
+        if (addedLabels.size === 0) {
+            console.log("WARNING: No matching labels to pull from (MERGE), using default label");
+            this.addEdge(ci - 1, ci);
+        }
+
+        this.prog.push(pipeType);
+    }
+
+    private addBackPipeType(pipeType: BackPipeType) {
+        const ci = this.prog.length;
+        this.adj.push([]);
+        let hasLabel = false;
+
+        for (let i = ci - 1; i > 0; --i) {
+
+            const pipe = this.prog.at(i)!;
+            if (pipe.getPipeType() !== PIPETYPES.AS) continue;
+
+            const label = (<AsPipeType> pipe).getLabel();
+
+            if (pipeType.satisfies(label)) {
+                this.addEdge(i, ci);
+                hasLabel = true;
+                break;
+            }
+        }
+
+        if (!hasLabel) {
+            console.log("WARNING: No matching labels to pull from (BACK), using default label");
+            this.addEdge(ci - 1, ci);
+        }
+        this.prog.push(pipeType);
     }
 
     v(predicate: number | string | object): Query {
@@ -61,7 +96,6 @@ export class Query {
         }
         const vertices = this.graph.findVertices(predicate);
         const pipeType: PipeType = VertexPipeType.create(vertices);
-        const i = this.prog.length;
         this.prog.push(pipeType);
         this.adj.push([]);
         return this;
@@ -79,6 +113,12 @@ export class Query {
         return this;
     }
 
+    back(name: string) {
+        const pipeType: BackPipeType = BackPipeType.create(name);
+        this.addBackPipeType(pipeType);
+        return this;
+    }
+
     as(name: string) {
         const pipeType: PipeType = AsPipeType.create(name);
         this.addPipeType(pipeType);
@@ -92,7 +132,10 @@ export class Query {
     }
 
     run(): Array<Entity> {
-        return QueryRunner.create(this.prog, this.adj).run();
+        if (this.runner == undefined) {
+            this.runner = QueryRunner.create(this.prog, this.adj);
+        }
+        return this.runner.run();
     }
 
     static create(_graph: Graph) {

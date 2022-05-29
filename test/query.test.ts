@@ -89,5 +89,17 @@ describe('Query Should Work', () => {
             const expected = graph.findEntitiesByIds(8, 9, 10, 14);
             expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
         });
+
+        it("b. Merge with parents", () => {
+            const actual = query.v(0).as('me').parent().as('parent').merge('me', 'parent').run();
+            const expected = graph.findEntitiesByIds(0, 9, 11, 12 ,13);
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
+        })
+
+        it("c. Back Should Work", () => {
+            const actual = query.v(2).as('me').parent().as('parent').parent().as('grand-parent').merge('parent', 'grand-parent').back('me').run();
+            const expected = graph.findEntitiesByIds(2);
+            expect(actual.map(x => x.id).sort()).toStrictEqual(expected.map(x => x.id).sort());
+        })
     })
 });
