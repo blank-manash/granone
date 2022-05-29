@@ -41,7 +41,7 @@ db.addVertices({ name: "Aria" }, {name: "Bubble"}, {name: "Caddle"}, {name: "Dut
 
 const edges = [0,2,0,4,0,5,1,4,1,5,2,3,2,4,4,5];
 
-for (let i = 0; i + 1 < edges.length; ++i) {
+for (let i = 0; i + 1 < edges.length; i += 2) {
     db.addEdge(edges[i], edges[i + 1]);
 }
 
