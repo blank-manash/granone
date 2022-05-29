@@ -1,4 +1,4 @@
-import {Vertex, STATES} from '../types';
+import {Vertex, STATES, PIPETYPES} from '../types';
 import {PipeType} from "../PipeType";
 
 export class VertexPipeType extends PipeType {

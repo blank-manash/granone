@@ -20,9 +20,13 @@ export class AsPipeType extends PipeType {
     }
 
     provides(v: Vertex): void {
-        v.label = this.label;
+        v.label = this.getLabel();
         this.list.push(v);
         this.updateState();
+    }
+    
+    getLabel() {
+        return this.label;
     }
 
     static create(_label: string) {

@@ -3,100 +3,84 @@ import {Entity, STATES, Vertex} from "./types";
 
 export class QueryRunner {
     private prog: Array<PipeType>;
-    private prev: Array<number>;
-    private index: number;
-    private vertex: Vertex | null;
+    private adj: Array<Array<number>>;
     private results: Entity[];
-    private currentPipe: PipeType;
+    private done: boolean;
 
-    constructor(_prog: Array<PipeType>, _prev: Array<number>) {
+    constructor(_prog: Array<PipeType>, _adj: Array<Array<number>>) {
         this.prog = _prog;
+        this.done = false;
         this.results = [];
-        this.prev = _prev;
-        this.index = 0;
-        this.vertex = null;
-        this.currentPipe = _prog.at(0)!;
+        this.adj = _adj;
     }
 
-    static create(_prog: Array<PipeType>, _prev: Array<number>) {
-        return new QueryRunner(_prog, _prev);
+    static create(_prog: Array<PipeType>, _adj: Array<Array<number>>) {
+        return new QueryRunner(_prog, _adj);
     }
 
-    private assignPipe() {
-        this.currentPipe = this.prog.at(this.index)!;
+    private isEnd(index: number): boolean {
+        return index + 1 === this.prog.length;
     }
 
-    private updatePrev(currentIndex: number) {
-        const state = this.currentPipe.getState();
-        if (state === STATES.RUNNING) {
-            this.prev[currentIndex] = currentIndex;
-        } else if (state === STATES.PULL) {
-            this.prev[currentIndex] = this.prev[currentIndex - 1];
-        }
+    private provide(pipe: PipeType, v: Vertex | null) {
+        if (v == null) return;
+        pipe.provides(v);
     }
 
-    private isEnd(): boolean {
-        return this.index + 1 === this.prog.length;
-    }
-
-    private provideVertex() {
-        if (this.vertex == null) return;
-        this.currentPipe.provides(this.vertex!);
-        this.vertex = null;
-    }
-
-    private processRunningState() {
-        this.vertex = this.currentPipe.get();
-        if (this.isEnd()) {
-            this.results.push(this.vertex.entity);
-            this.vertex = null;
-            return;
-        }
-        this.index = this.index + 1;
+    private processRunningState(pipe: PipeType) {
+        return pipe.get();
     }
 
     private processPullState() {
-        this.index = this.prev[this.index];
+        return null;
     }
 
-    private process() {
-        const state = this.currentPipe.getState();
+    private process(pipe: PipeType): Vertex | null {
+        const state = pipe.getState();
         switch (state) {
 
             case STATES.RUNNING:
-                this.processRunningState();
-                break;
+                return this.processRunningState(pipe);
 
             case STATES.PULL:
-                this.processPullState();
-                break;
+                return this.processPullState();
 
             case STATES.DONE:
-                return true;
+                this.done = true;
+                return null;
 
             default:
                 throw Error("Undefined STATE");
         };
 
-        return false;
     }
 
 
-    public run(): Array<Entity> {
-        if (this.prog.length === 0) return this.results;
+    private dfs(i: number, v: Vertex | null) {
 
-        while (true) {
-            this.assignPipe();
-            const currentIndex = this.index;
-            this.provideVertex();
+        if (this.done) return;
 
-            const done: boolean = this.process();
-            if (done) break;
+        const pipe = this.prog.at(i)!;
+        this.provide(pipe, v);
+        let ver = this.process(pipe);
+        while (ver != null && !this.done) {
 
-            this.updatePrev(currentIndex);
+            if (this.isEnd(i)) {
+                this.results.push(ver.entity)
+            }
 
+            const children = this.adj.at(i)!;
+            for (const child of children) {
+                this.dfs(child, ver);
+                if (this.done) return;
+            }
+            ver = this.process(pipe);
         }
 
+    }
+
+    public run(): Array<Entity> {
+        this.dfs(0, null);
         return [...new Set(this.results)];
     }
 }

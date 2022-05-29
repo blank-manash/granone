@@ -12,26 +12,47 @@ import {MergePipeType} from './pipetypes/mergePipe';
 import {ParentPipeType} from './pipetypes/parentPipe';
 import {VertexPipeType} from './pipetypes/vertexPipe';
 import {QueryRunner} from './QueryRunner';
-import {Entity, STATES, Vertex} from './types';
+import {Entity, PIPETYPES, Vertex} from './types';
 
 export class Query {
     prog: Array<PipeType>;
-    prev: Array<number>;
     graph: Graph;
+    adj: Array<Array<number>>;
 
     private constructor(_graph: Graph) {
         this.prog = [];
-        this.prev = [];
+        this.adj = new Array<Array<number>>();
         this.graph = _graph;
+    }
+
+    private addEdge(i: number, j: number) {
+        this.adj[i].push(j);
     }
 
     private addPipeType(pipeType: PipeType) {
         const i = this.prog.length;
-        pipeType.addToPullIndex(i - 1);
-        this.prev[i] = this.prev[i - 1];
+        this.prog.push(pipeType);
+        this.adj.push([]);
+        this.addEdge(i - 1, i);
     }
     
     private addMergePipeType(pipeType: MergePipeType) {
+        const ci = this.prog.length;
+        this.adj.push([]);
+        for (let i = this.prog.length - 1; i > 0; i--) {
+
+            const pipe = this.prog.at(i)!;
+            if (pipe.getPipeType() === PIPETYPES.MERGE) break;
+            if (pipe.getPipeType() !== PIPETYPES.AS) continue;
+
+            const label = (<AsPipeType>pipe).getLabel();
+
+            if (!pipeType.satisfies(label)) continue;
+
+            this.addEdge(i, ci);
+        }
+        this.prog.push(pipeType);
+
     }
 
     v(predicate: number | string | object): Query {
@@ -42,7 +63,7 @@ export class Query {
         const pipeType: PipeType = VertexPipeType.create(vertices);
         const i = this.prog.length;
         this.prog.push(pipeType);
-        this.prev.push(i);
+        this.adj.push([]);
         return this;
     }
 
@@ -65,13 +86,13 @@ export class Query {
     }
 
     merge(...args: string[]) {
-        const pipeType: PipeType = MergePipeType.create(...args);
-        this.addPipeType(pipeType);
+        const pipeType: MergePipeType = MergePipeType.create(...args);
+        this.addMergePipeType(pipeType);
         return this;
     }
 
     run(): Array<Entity> {
-        return QueryRunner.create(this.prog, this.prev).run();
+        return QueryRunner.create(this.prog, this.adj).run();
     }
 
     static create(_graph: Graph) {
