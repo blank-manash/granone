@@ -1,6 +1,6 @@
 {
   "name": "granone",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Tiny Graph Database built in Typescript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
