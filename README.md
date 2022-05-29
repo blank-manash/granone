@@ -1,4 +1,23 @@
-# GraphDB
+# Gracula
 
-This is a graph database, work in progress. README will be updated in time.
-For any details in contribution, you can raise a issue.
+Gracula is a in-memory graph database that emphasizes lazy-evaluation and supports complex queries written with the pleasure of TypeScript.
+
+## Installation
+```
+npm install gracula
+```
+
+## Usage
+
+### Basic Usage
+```typescript
+
+
+```
+
+### Complex Queries
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
+

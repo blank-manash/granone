@@ -26,7 +26,7 @@ export class TakePipeType extends PipeType {
     }
 
     updateState(): void {
-        if (this.taken === this.limit) {
+        if (this.done()) {
             this.state = STATES.DONE;
         } else {
             this.updateStateAndMakeUnqiue();
