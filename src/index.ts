@@ -5,11 +5,15 @@ export default class Granone {
     graph: Graph;
 
     addVertices(...a: any[]) {
-        this.graph.addNodeMany(...a);
+        return this.graph.addNodeMany(...a);
     }
 
     addVertex(a: any) {
-        this.graph.addNode(a);
+        return this.graph.addNode(a);
+    }
+
+    addEdge(a: number, b:number) {
+        this.graph.addEdge(a, b);
     }
 
     query() {

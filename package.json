@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "A Tiny Graph Database built in Typescript.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "start": "ts-node index.ts",
-    "build": "npx tsc --build",
+    "build": "rm -rf dist && npx tsc --build",
     "test": "jest"
   },
   "author": "Manash Baul",
