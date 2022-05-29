@@ -1,7 +1,7 @@
 import {Graph} from "./graph";
 import {Query} from "./query";
 
-export default class Grune {
+export default class Granone {
     graph: Graph;
 
     addVertices(...a: any[]) {
@@ -22,7 +22,7 @@ export default class Grune {
 
     static create() {
         const _graph = Graph.create();
-        return new Grune(_graph);
+        return new Granone(_graph);
     }
 
 }
